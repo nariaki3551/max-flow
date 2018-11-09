@@ -155,15 +155,24 @@ def fifo_preflow_push_algo(oriG):
     if FREEZE and frozen_nodes:
         print('FREEZE operation')
         print('frozen_nodes', frozen_nodes)
-        # label the node to the distance from s
+        from collections import OrderedDict
 
+        # label the node to the distance from s
         dfs_lable_from_s(oriG, resG)
         sdepth = lambda node: oriG.node[node]['sdepth']
 
+        def iter_can_back(u, visited):
+            children = [v for v in set(resG[u]) - set(visited)
+                if u in oriG[v] and oriG[v][u]['preflow'] > 0]
+            for i in sorted(children, key=lambda v: (v in {s} | frozen_nodes, oriG[v][u]['preflow'], -sdepth(v)), reverse=True):
+                yield i
+
+
         if PLOT:
             title='label on depth from s'
-            draw_graph(oriG, active_nodes=active_LIST,
+            draw_graph(oriG, active_nodes=active_nodes,
                 frozen_nodes=frozen_nodes, title=title, node_label='sdepth')
+        
         # reverse flow from the frozen point faster than s
         for frozen_node in sorted(frozen_nodes, key=sdepth, reverse=True):
             frozen_nodes.remove(frozen_node)
@@ -171,46 +180,52 @@ def fifo_preflow_push_algo(oriG):
             print(f'frozen_node {frozen_node} excess_value {excess_value}')
             # find the path from fronzen node to s or other fronzen node by DFS and flow
             # continue this process until there is no excess
-            path = [frozen_node]
-            visited_nodes = {frozen_node}
-            while excess_value:
-                tail_node = path[-1]
-                if tail_node in ({s} | frozen_nodes) and tail_node != frozen_node:
-                    # find the path
-                    delta = min(excess_value, min(resG[u][v]['preflow'] for u, v in zip(path, path[1:]))) # 流せる最小量
-                    excess_value -= delta
-                    for u, v in zip(path, path[1:]):
-                        if (u, v) in oriG.edges():
-                            flow(u, v,  delta)
-                        else:
-                            flow(v, u, -delta)
-                        saturating_flow += 1
-                        if PLOT:
-                            tmp = frozen_nodes | {frozen_node} if excess_value else frozen_nodes
-                            title='push {} → {}: {} units'.format(u, v, delta)
-                            draw_graph(oriG, frozen_nodes=tmp, title=title, node_label='d')
-                    # back to the edge whose weight is delta
-                    pivot_ix = 0
-                    for u, v in zip(path, path[1:]):
-                        if oriG[v][u]['preflow'] == 0:
-                            break
-                        pivot_ix += 1
-                    # len(path) == pivot_ixになるまでpopする
-                    remove_nodes = path[pivot_ix+1:]
-                    tail_node = path[pivot_ix]
-                    for remove_node in remove_nodes:
-                        path.pop()
-                        visited_nodes -= (set(resG[remove_node]) - set(path)) | {remove_node}
+            
+            visited = OrderedDict.fromkeys([frozen_node])
+            stack = [iter_can_back(frozen_node, visited)]
 
-                childs = [v for v in resG[tail_node] if tail_node in oriG[v] and oriG[v][tail_node]['preflow'] > 0]
-                if not childs:
-                    path.pop()
-                    # tail_nodeから繋がる枝をvisitから削除する(tail_nodeは削除しない)
-                    visited_nodes -= (set(resG[tail_node]) - set(path)) | {tail_node}
-                else:
-                    child = min(childs, key=sdepth)
-                    path.append(child)
-                    visited_nodes.add(child)
+            while excess_value:
+                children = stack[-1]
+                child = next(children, None)
+
+                if child is None:
+                    stack.pop()
+                    visited.popitem()
+                elif oriG[child][list(visited)[-1]]['preflow'] == 0:
+                    continue
+                elif len(visited) < N-1:
+                    if child in ({s} | frozen_nodes):
+                        path = list(visited) + [child]
+                        print('found path', path)
+                        min_cap = min(oriG[v][u]['preflow'] for u, v in zip(path, path[1:]))
+                        delta = min(excess_value, min_cap) # max flow value 
+                        excess_value -= delta
+                        for u, v in zip(path, path[1:]):
+                            if (u, v) in oriG.edges():
+                                flow(u, v,  delta)
+                            else:
+                                flow(v, u, -delta)
+                            saturating_flow += 1
+                            if PLOT:
+                                tmp = frozen_nodes | {frozen_node} if excess_value else frozen_nodes
+                                title='push {} → {}: {} units'.format(u, v, delta)
+                                draw_graph(oriG, frozen_nodes=tmp, title=title, node_label='sdepth')
+
+                        if excess_value > 0:
+                            # back to the edge whose weight is delta
+                            pivot_ix = 0
+                            for u, v in zip(path, path[1:]):
+                                if oriG[v][u]['preflow'] == 0:
+                                    break
+                                pivot_ix += 1
+                            # len(path) == pivot_ixになるまでpopする
+                            for _ in range(len(path)-pivot_ix-2):
+                                stack.pop()
+                                visited.popitem()
+
+                    elif child not in visited:
+                        visited[child] = None
+                        stack.append(iter_can_back(child, visited))
 
     return oriG
 

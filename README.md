@@ -25,6 +25,7 @@ preflow push-relabel algorithmによって, max-flowを求める.
 + pureなし*.py
 
   + optionあり(Global labeling, Gap-relabeling, Freeze operation)
+  + 各optionの[参考](https://qiita.com/nariaki3551/items/65baee3c6ef0a6ffa136)
 
 
 

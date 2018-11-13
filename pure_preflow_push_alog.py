@@ -96,11 +96,11 @@ def generic_preflow_push_algo(oriG):
         else:
             # relabel operation
             oriG.node[i]['d'] = resG.node[i]['d'] = relabel(resG, i)
-            print('relaveld {}: {}'.format(i, oriG.node[i]['d']))
+            print('relabeld {}: {}'.format(i, oriG.node[i]['d']))
             active_nodes.add(i)
             update = True
             if PLOT:
-                title = 'relaveld {}: {}'.format(i, oriG.node[i]['d'])
+                title = 'relabeld {}: {}'.format(i, oriG.node[i]['d'])
                 draw_graph(oriG, active_nodes=active_nodes, title=title)
 
     return oriG

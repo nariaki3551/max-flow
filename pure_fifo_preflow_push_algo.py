@@ -93,15 +93,15 @@ def fifo_preflow_push_algo(oriG):
                 tmp = active_LIST + [i] if excess(i) else active_LIST
                 title='flow {} → {}: {} units'.format(i, v, delta)
                 draw_graph(oriG, active_nodes=tmp, title=title)
-            
+
         if excess(i):
             # relabel operation
             oriG.node[i]['d'] = resG.node[i]['d'] = relabel(resG, i)
-            print('relaveld {}: {}'.format(i, oriG.node[i]['d']))
+            print('relabeld {}: {}'.format(i, oriG.node[i]['d']))
             active_LIST.append(i)
             update = True
             if PLOT:
-                draw_graph(oriG, active_nodes=active_LIST, title='relaveld {}: {}'.format(i, oriG.node[i]['d']))
+                draw_graph(oriG, active_nodes=active_LIST, title='relabeld {}: {}'.format(i, oriG.node[i]['d']))
 
     return oriG
 

@@ -81,7 +81,7 @@ def fifo_preflow_push_algo(oriG):
     if PLOT: draw_graph(oriG, title='preprocess', node_label='d')
 
     if DFS:
-        # DFS laveling
+        # DFS labeling
         print('DFS levling')
         dfs_set_label(oriG, resG)
         if PLOT: draw_graph(oriG, title='DFS labeling', node_label='d')
@@ -112,15 +112,15 @@ def fifo_preflow_push_algo(oriG):
                     title=title, node_label='d')
 
         if excess(i):
-            # gap-relaveling
-            # Whether or not a node of label g dose not exists by laveling i
+            # gap-relabeling
+            # Whether or not a node of label g dose not exists by labeling i
             g = d(i)
             if GAP and all(d(j) != g for j in oriG.node() if j != i):
-                # operate gep-relaveling
-                print(f'gap-relaveling operation g = {g}')
+                # operate gep-relabeling
+                print(f'gap-relabeling operation g = {g}')
                 for j in oriG.node():
                     if g < d(j) < N or j == i:
-                        print(f'gap-relaveled {j}: {N}')
+                        print(f'gap-relabeled {j}: {N}')
                         oriG.node[j]['d'] = resG.node[j]['d'] = N
                         if FREEZE and excess(j):
                             print('freeze {}: {}'.format(j, d(j)))
@@ -131,7 +131,7 @@ def fifo_preflow_push_algo(oriG):
                             active_LIST.append(j)
                         relabel_operation += 1
                         if PLOT:
-                            title = f'gap-relaveled {j}: {N}'
+                            title = f'gap-relabeled {j}: {N}'
                             draw_graph(oriG, active_nodes=active_LIST,
                                 frozen_nodes=frozen_nodes, title=title, node_label='d')
             else:
@@ -146,9 +146,9 @@ def fifo_preflow_push_algo(oriG):
                             frozen_nodes=frozen_nodes, title=title, node_label='d')
                 else:
                     active_LIST.append(i)
-                    print('relaveld {}: {}'.format(i, oriG.node[i]['d']))
+                    print('relabeld {}: {}'.format(i, oriG.node[i]['d']))
                     if PLOT:
-                        title = 'relaveld {}: {}'.format(i, oriG.node[i]['d'])
+                        title = 'relabeld {}: {}'.format(i, oriG.node[i]['d'])
                         draw_graph(oriG, active_nodes=active_LIST,
                             frozen_nodes=frozen_nodes, title=title, node_label='d')
 

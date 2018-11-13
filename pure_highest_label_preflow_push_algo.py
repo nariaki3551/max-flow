@@ -103,13 +103,13 @@ def highest_label_preflow_push_algo(oriG):
         if excess(i):
             # relabel operation
             oriG.node[i]['d'] = resG.node[i]['d'] = relabel(resG, i)
-            print('relaveld {}: {}'.format(i, oriG.node[i]['d']))
+            print('relabeld {}: {}'.format(i, oriG.node[i]['d']))
             # add active_LIST relabeled node
             active_nodes.add(i)
             active_LIST[oriG.node[i]['d']].add(i)
             highest_level = max(highest_level, oriG.node[i]['d'])
             if PLOT:
-                draw_graph(oriG, active_nodes=active_nodes, title='relaveld {}: {}'.format(i, oriG.node[i]['d']))
+                draw_graph(oriG, active_nodes=active_nodes, title='relabeld {}: {}'.format(i, oriG.node[i]['d']))
 
     return oriG
 

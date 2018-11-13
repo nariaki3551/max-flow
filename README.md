@@ -20,7 +20,7 @@ preflow push-relabel algorithmによって, max-flowを求める.
 
   実行方法
 
-  `python3 (ファイル名).py`でusegeが表示される.
+  `python3 (ファイル名).py`でusageが表示される.
 
 + pureなし*.py
 
@@ -30,7 +30,7 @@ preflow push-relabel algorithmによって, max-flowを求める.
 
   実行方法
 
-  `python3 (ファイル名).py`でusegeが表示される.
+  `python3 (ファイル名).py`でusageが表示される.
 
 
 + graph_data*.txt

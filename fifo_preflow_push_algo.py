@@ -170,9 +170,9 @@ def fifo_preflow_push_algo(oriG):
 
         if PLOT:
             title='label on depth from s'
-            draw_graph(oriG, active_nodes=active_nodes,
+            draw_graph(oriG, active_nodes=active_LIST,
                 frozen_nodes=frozen_nodes, title=title, node_label='sdepth')
-        
+
         # reverse flow from the frozen point faster than s
         for frozen_node in sorted(frozen_nodes, key=sdepth, reverse=True):
             frozen_nodes.remove(frozen_node)
@@ -180,7 +180,7 @@ def fifo_preflow_push_algo(oriG):
             print(f'frozen_node {frozen_node} excess_value {excess_value}')
             # find the path from fronzen node to s or other fronzen node by DFS and flow
             # continue this process until there is no excess
-            
+
             visited = OrderedDict.fromkeys([frozen_node])
             stack = [iter_can_back(frozen_node, visited)]
 
@@ -198,7 +198,7 @@ def fifo_preflow_push_algo(oriG):
                         path = list(visited) + [child]
                         print('found path', path)
                         min_cap = min(oriG[v][u]['preflow'] for u, v in zip(path, path[1:]))
-                        delta = min(excess_value, min_cap) # max flow value 
+                        delta = min(excess_value, min_cap) # max flow value
                         excess_value -= delta
                         for u, v in zip(path, path[1:]):
                             if (u, v) in oriG.edges():

@@ -4,7 +4,6 @@ preflow push-relabel algorithmによって, max-flowを求める.
 
 ##  開発環境
 
-+ maxOS High Sierra (version 10.13.6)
 + Python3.7
 
 
